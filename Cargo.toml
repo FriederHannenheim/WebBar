@@ -1,0 +1,11 @@
+[package]
+name = "webbar"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+webkit2gtk = { version = "0.15", features = ["v2_30"] }
+gtk = { version = "0.14" }
+gtk-layer-shell = "0.2"
