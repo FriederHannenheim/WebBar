@@ -9,3 +9,6 @@ edition = "2021"
 webkit2gtk = { version = "0.15", features = ["v2_30"] }
 gtk = { version = "0.14" }
 gtk-layer-shell = "0.2"
+dbus = "0.9"
+dbus-crossroads = "0.5.0"
+linicon = "2.2"
