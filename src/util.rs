@@ -1,4 +1,4 @@
-use dbus::arg::{RefArg, ArgType};
+use dbus::arg::{RefArg};
 
 pub fn refarg_to_string(value: &dyn RefArg) -> String {
     if let Some(s) = value.as_str() {return s.to_owned()};

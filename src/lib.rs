@@ -1,6 +1,6 @@
 use std::env;
-use std::thread;
-use std::sync::{Arc, Mutex};
+use std::{thread, time};
+
 
 use gtk::prelude::*;
 use gtk::{Application, ApplicationWindow};
@@ -15,7 +15,7 @@ use gtk_layer_shell as layer_shell;
 use layer_shell::Edge;
 
 use webkit2gtk::traits::{WebViewExt, WebInspectorExt, SettingsExt};
-use webkit2gtk::{WebContext, WebView, WebViewExtManual, UserContentManager, LoadEvent};
+use webkit2gtk::{WebContext, WebView, WebViewExtManual, UserContentManager};
 
 use crate::messages::MessageSender;
 
@@ -39,6 +39,8 @@ pub fn run(app: &Application) {
     let (sender, receiver) = MainContext::channel(glib::PRIORITY_DEFAULT);
     
     thread::spawn(move || {
+        // FIXME: Should be using a callback to wait until the page is loaded
+        thread::sleep(time::Duration::from_millis(5000));
         tray::connect_to_dbus(sender).unwrap();
     });
 

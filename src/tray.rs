@@ -39,7 +39,7 @@ pub fn connect_to_dbus(sender: Sender<arg::PropMap>) -> Result<(), Box<dyn Error
         let mut dest_path = dest_path.split(";");
         let p = conn.with_proxy(dest_path.next().unwrap(), dest_path.next().unwrap(), Duration::from_millis(1000));
         let metadata: arg::PropMap = p.get_all("org.kde.StatusNotifierItem").unwrap();
-        sender.send(metadata);
+        sender.send(metadata).ok();
         true
     })?;
 
@@ -57,7 +57,6 @@ fn setup_watcher(b: &mut IfaceBuilder<Vec<String>>) {
     b.property("ProtocolVersion")
         .get(|_, _| Ok(0));
 
-    // TODO: Maybe we don't need these signals
     let status_notifier_item_registered = 
         b.signal::<(String,), _>("StatusNotifierItemRegistered", ("service",)).msg_fn();
 
@@ -70,7 +69,10 @@ fn setup_watcher(b: &mut IfaceBuilder<Vec<String>>) {
     // Register a new icon to be shown in the tray
     b.method("RegisterStatusNotifierItem", ("service",), (), 
         move |ctx: &mut Context, items, (service,):(String,)| {
-            let service = ctx.message().sender().unwrap().to_string() + ";" + &service;
+            let path = ctx.message().sender().unwrap().to_string();
+            let service = format!("{};{}",&path,
+                if service == path {"/StatusNotifierItem"} else {&service}
+            );
             items.push(service.clone());
 
             let signal = status_notifier_item_registered(ctx.path(), &(service.clone(),));
